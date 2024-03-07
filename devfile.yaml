@@ -1,6 +1,6 @@
 schemaVersion: 2.2.0
 metadata:
-  name: go
+  name: go-app
   displayName: Go Runtime
   description: 'Go is an open source programming language that makes it easy to build simple, reliable, and efficient software.'
   icon: https://raw.githubusercontent.com/devfile-samples/devfile-stack-icons/main/golang.svg
@@ -37,6 +37,37 @@ components:
         targetPort: 8081
         path: /
         secure: true
+  - name: outerloop-deploy
+    kubernetes:
+      inlined: |-
+        kind: Deployment
+        apiVersion: apps/v1
+        metadata:
+          name: go-app
+        spec:
+          replicas: 1
+          selector:
+            matchLabels:
+              app: go-app
+          template:
+            metadata:
+              labels:
+                app: go-app
+            spec:
+              containers:
+                - name: go-app
+                  image: go-app:latest
+                  ports:
+                    - name: http
+                      containerPort: 3001
+                      protocol: TCP
+                  resources:
+                    limits:
+                      memory: "50Mi"
+                      cpu: "25m"
+                    requests:
+                      memory: "10Mi"
+                      cpu: "10m"
 commands:
   - id: build-image
     apply:
