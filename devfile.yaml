@@ -21,7 +21,7 @@ components:
     image:
       imageName: go-image:latest
       dockerfile:
-        uri: docker/Dockerfile
+        uri: Dockerfile
         buildContext: .
         rootRequired: false
   - name: kubernetes-deploy
