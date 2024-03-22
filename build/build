@@ -1,0 +1,21 @@
+#!/bin/bash
+
+#REL_VER=$(git describe --tags --abbrev=0 | sed "s/v//")
+REL_VER=2.1
+if [[ -z "$REL_VER" ]]; then
+    echo "Must provide version to prepare release" 1>&2
+    exit 1
+fi
+mkdir -p releases
+
+# Manual build release based on Terraform docs.
+prepare_release() {
+    go build -buildvcs=false -o /tmp/main_linux_amd64
+    mv /tmp/main_linux_amd64 main_v${REL_VER}
+    zip releases/main_${REL_VER}_linux_amd64.zip LICENSE README.md main_v${REL_VER}
+    rm main_v${REL_VER}
+    cp test-manifest.json releases/main_${REL_VER}_manifest.json
+    cd releases && sha256sum *zip main_${REL_VER}_manifest.json > main_${REL_VER}_SHA256SUMS
+}
+
+prepare_release
